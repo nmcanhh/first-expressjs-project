@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const port = 3000;
 var bodyParser = require('body-parser');
-const AccountModel = require('./models/account');
+const UserModel = require('./models/user');
 
 app.use(bodyParser.urlencoded({
     extended: false
@@ -13,13 +13,13 @@ app.post('/register', (req, res, next) => {
     var username = req.body.username;
     var password = req.body.password;
 
-    AccountModel.findOne({
+    UserModel.findOne({
             username: username
         }).then(data => {
             if (data) {
                 res.json('Tài khoản đã tồn tại!');
             } else {
-                return AccountModel.create({
+                return UserModel.create({
                     username: username,
                     password: password
                 })
@@ -35,7 +35,7 @@ app.post('/register', (req, res, next) => {
 app.post('/login', (req, res, next) => {
     var username = req.body.username;
     var password = req.body.password;
-    AccountModel.findOne({  
+    UserModel.findOne({  
         username: username,
         password: password
     }).then(data => {
@@ -49,9 +49,9 @@ app.post('/login', (req, res, next) => {
     })
 })
 
-const accountRouter = require('./routers/account');
+const userRouter = require('./routers/user');
 
-app.use('/api/account/', accountRouter);
+app.use('/api/user/', userRouter);
 
 app.get('/', (req, res, next) => {
     res.json('Home');

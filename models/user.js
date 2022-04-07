@@ -6,13 +6,13 @@ mongoose.connect('mongodb://localhost/K5-Nodemy', {
 
 const Schema = mongoose.Schema;
 
-const AccountSchema = new Schema ({
+const UserSchema = new Schema ({
     username: String,
     password: String
 }, {
-    collection: 'account'
+    collection: 'users'
 });
 
-const AccountModel = mongoose.model('account', AccountSchema);
+const UserModel = mongoose.model('users', UserSchema);
 
-module.exports = AccountModel;
+module.exports = UserModel;
