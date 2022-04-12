@@ -18,6 +18,8 @@
   },
   "homepage": "https://github.com/nmcanhh/first-expressjs-project#readme",
   "dependencies": {
+    "axios": "^0.26.1",
+    "bcrypt": "^5.0.1",
     "body-parser": "^1.20.0",
     "dotenv": "^16.0.0",
     "express": "^4.17.3",
@@ -27,6 +29,7 @@
     "mongoose": "^6.2.10",
     "nodemon": "^2.0.15",
     "passport": "^0.5.2",
+    "passport-github2": "^0.1.12",
     "passport-google-oauth2": "^0.2.0"
   }
 }

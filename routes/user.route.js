@@ -1,8 +1,9 @@
 const express = require('express');
 var router = express.Router();
-const UserModel = require('../models/user');
+const UserModel = require('../models/user.model');
 const jwt = require('jsonwebtoken');
 const PAGE_SIZE = 10;
+const bcrypt = require('bcrypt');
 
 const checkLogin = async (req, res, next) => {
     try {
@@ -31,7 +32,6 @@ const checkRole = (req, res, next) => {
         res.json('Bạn không đủ quyền!')
     }
 }
-
 
 // Lấy dữ liệu từ DB
 router.get('/', checkLogin, checkRole, (req, res, next) => {
@@ -78,27 +78,37 @@ router.get('/:id', (req, res, next) => {
 });
 
 // Thêm mới dữ liệu vào DB
-router.post('/create', (req, res, next) => {
-    var username = req.body.username;
-    var password = req.body.password;
+router.post('/create', async (req, res, next) => {
+    try {
+        var username = req.body.username;
+        var password = req.body.password;
+        const saltRounds = 10;
+        const salt = bcrypt.genSaltSync(saltRounds);
+        const hash = bcrypt.hashSync(password, salt);
+        const user = await UserModel.findOne({
+            username: username
+        });
 
-    UserModel.findOne({
-        username: username
-    }).then(data => {
-        if (data) {
-            res.json('Tài khoản đã tồn tại!');
-        } else {
-            return UserModel.create({
-                username: username,
-                password: password
+        // const compare = bcrypt.compareSync("12345rqwr6789", user.password); // true
+
+        if (user) {
+            return res.status(400).json({
+                code: 400,
+                message: "Account already exists!"
             })
         }
-    }).then(data => {
-        res.status(200).json('Tạo tài khoản thành công!');
-    })
-        .catch(err => {
-            res.status(500).json('Tạo tài khoản thất bại!');
-        })
+
+        const create = await UserModel.create({
+            username,
+            password: hash,
+            role: "member"
+        });
+        const result = create.toObject();
+        delete result.password;
+        return res.send(result);
+    } catch (error) {
+        throw new Error(error)
+    }
 });
 
 // Update dữ liệu trong DB
